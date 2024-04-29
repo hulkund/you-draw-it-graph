@@ -1,15 +1,29 @@
 var data = [
-  {"year": 2007,    "debt": 70},
-  {"year": 2008,    "debt": 75},
-  {"year": 2009,    "debt": 80},
-  {"year": 2010,    "debt": 80},
-  {"year": 2011,    "debt": 150},
-  {"year": 2012,    "debt": 200},
-  {"year": 2013,    "debt": 400},
-  {"year": 2014,    "debt": 490},
-  {"year": 2015,    "debt": 490},
-  {"year": 2016,    "debt": 560},
+  {"year": 2000, "price": 349000},
+  {"year": 2001, "price": 392645},
+  {"year": 2002, "price": 387000},
+  {"year": 2003, "price": 412500},
+  {"year": 2004, "price": 483000},
+  {"year": 2005, "price": 530000},
+  {"year": 2006, "price": 522732},
+  {"year": 2007, "price": 536500},
+  {"year": 2008, "price": 550000},
+  {"year": 2009, "price": 530000},
+  {"year": 2010, "price": 580000},
+  {"year": 2011, "price": 617500},
+  {"year": 2012, "price": 621000},
+  {"year": 2013, "price": 650000},
+  {"year": 2014, "price": 739000},
+  {"year": 2015, "price": 790000},
+  {"year": 2016, "price": 845000},
+  {"year": 2017, "price": 920000},
+  {"year": 2018, "price": 995000},
+  {"year": 2019, "price": 1102500},
+  {"year": 2020, "price": 1093750},
+  {"year": 2021, "price": 980000},
+  {"year": 2022, "price": 1075000}
 ]
+
 
 var ƒ = d3.f
 
@@ -23,19 +37,19 @@ var c = d3.conventions({
 
 c.svg.append('rect').at({width: c.width, height: c.height, opacity: 0})
 
-c.x.domain([2007, 2016])
-c.y.domain([0, 700])
+c.x.domain([2000, 2022])
+c.y.domain([0, 1200000])
 
 c.xAxis.ticks(10).tickFormat(ƒ())
 c.yAxis.ticks(5).tickFormat(d => d + '€')
 
-var area = d3.area().x(ƒ('year', c.x)).y0(ƒ('debt', c.y)).y1(c.height)
-var line = d3.area().x(ƒ('year', c.x)).y(ƒ('debt', c.y))
+var area = d3.area().x(ƒ('year', c.x)).y0(ƒ('price', c.y)).y1(c.height)
+var line = d3.area().x(ƒ('year', c.x)).y(ƒ('price', c.y))
 
 var clipRect = c.svg
   .append('clipPath#clip')
   .append('rect')
-  .at({width: c.x(2011) - 2, height: c.height})
+  .at({width: c.x(2005) - 2, height: c.height})
 
 var correctSel = c.svg.append('g').attr('clip-path', 'url(#clip)')
 
@@ -46,10 +60,10 @@ yourDataSel = c.svg.append('path.your-line')
 c.drawAxis()
 
 yourData = data
-  .map(function(d){ return {year: d.year, debt: d.debt, defined: 0} })
+  .map(function(d){ return {year: d.year, price: d.price, defined: 0} })
   .filter(function(d){
-    if (d.year == 2011) d.defined = true
-    return d.year >= 2011
+    if (d.year == 2005) d.defined = true
+    return d.year >= 2005
   })
 
 var completed = false
@@ -57,12 +71,12 @@ var completed = false
 var drag = d3.drag()
   .on('drag', function(){
     var pos = d3.mouse(this)
-    var year = clamp(2009, 2016, c.x.invert(pos[0]))
-    var debt = clamp(0, c.y.domain()[1], c.y.invert(pos[1]))
+    var year = clamp(2005, 2022, c.x.invert(pos[0]))
+    var price = clamp(0, c.y.domain()[1], c.y.invert(pos[1]))
 
     yourData.forEach(function(d){
       if (Math.abs(d.year - year) < .5){
-        d.debt = debt
+        d.price = price
         d.defined = true
       }
     })
@@ -71,7 +85,7 @@ var drag = d3.drag()
 
     if (!completed && d3.mean(yourData, ƒ('defined')) == 1){
       completed = true
-      clipRect.transition().duration(1500).attr('width', c.x(2016))
+      clipRect.transition().duration(1500).attr('width', c.x(2022))
     }
   })
 
